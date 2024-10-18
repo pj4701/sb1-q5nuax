@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Eco-Innovation Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-green-100 to-blue-100 min-h-screen">
+    <header class="bg-green-600 text-white p-4">
+        <h1 class="text-3xl font-bold text-center">GenAI Eco-Innovation Platform</h1>
+    </header>
+    <nav class="bg-green-500 p-2">
+        <ul class="flex justify-center space-x-4">
+            <li>
+                <button class="px-4 py-2 rounded bg-white text-green-600" onclick="showTab('music')">Eco Music</button>
+            </li>
+            <li>
+                <button class="px-4 py-2 rounded text-white" onclick="showTab('art')">Eco Art</button>
+            </li>
+            <li>
+                <button class="px-4 py-2 rounded text-white" onclick="showTab('greenspace')">Green Space</button>
+            </li>
+        </ul>
+    </nav>
+    <main class="container mx-auto mt-8 p-4">
+        <div id="music-tab" class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4">AI-Enhanced Environmental Music Generator</h2>
+            <div class="mb-4">
+                <label for="environmentalData" class="block mb-2">Enter Environmental Data:</label>
+                <textarea id="environmentalData" class="w-full p-2 border rounded" placeholder="e.g., Rainforest sounds, ocean waves, endangered species calls"></textarea>
+            </div>
+            <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onclick="generateMusic()">Generate Music</button>
+            <div id="music-result" class="mt-4"></div>
+        </div>
+        <div id="art-tab" class="bg-white p-6 rounded-lg shadow-md hidden">
+            <h2 class="text-2xl font-bold mb-4">Eco-Art Generator</h2>
+            <div class="mb-4">
+                <label for="environmentalTheme" class="block mb-2">Enter Environmental Theme:</label>
+                <input type="text" id="environmentalTheme" class="w-full p-2 border rounded" placeholder="e.g., Climate change, deforestation, ocean pollution">
+            </div>
+            <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onclick="generateArt()">Generate Art</button>
+            <div id="art-result" class="mt-4"></div>
+        </div>
+        <div id="greenspace-tab" class="bg-white p-6 rounded-lg shadow-md hidden">
+            <h2 class="text-2xl font-bold mb-4">Green Space and Urban Design</h2>
+            <div class="mb-4">
+                <label for="urbanSpaceDescription" class="block mb-2">Describe the Urban Space:</label>
+                <textarea id="urbanSpaceDescription" class="w-full p-2 border rounded" placeholder="e.g., Downtown area, abandoned lot, rooftop"></textarea>
+            </div>
+            <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" onclick="generateGreenSpace()">Generate Green Space Design</button>
+            <div id="greenspace-result" class="mt-4"></div>
+        </div>
+    </main>
+    <script>
+        function showTab(tabName) {
+            document.querySelectorAll('main > div').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('bg-white', 'text-green-600'));
+            document.querySelector(`button[onclick="showTab('${tabName}')"]`).classList.add('bg-white', 'text-green-600');
+        }
+
+        async function generateMusic() {
+            const environmentalData = document.getElementById('environmentalData').value;
+            const response = await fetch('/generate_music', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({environmental_data: environmentalData})
+            });
+            const data = await response.json();
+            document.getElementById('music-result').innerHTML = `<h3 class="font-bold">Generated Music:</h3><p>${data.result}</p>`;
+        }
+
+        async function generateArt() {
+            const environmentalTheme = document.getElementById('environmentalTheme').value;
+            const response = await fetch('/generate_art', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({environmental_theme: environmentalTheme})
+            });
+            const data = await response.json();
+            document.getElementById('art-result').innerHTML = `<h3 class="font-bold mb-2">Generated Art:</h3><img src="data:image/png;base64,${data.result}" alt="AI-generated eco-art" class="w-full rounded-lg shadow-md">`;
+        }
+
+        async function generateGreenSpace() {
+            const urbanSpaceDescription = document.getElementById('urbanSpaceDescription').value;
+            const response = await fetch('/generate_green_space', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({urban_space_description: urbanSpaceDescription})
+            });
+            const data = await response.json();
+            document.getElementById('greenspace-result').innerHTML = `<h3 class="font-bold mb-2">Generated Green Space Design:</h3><p>${data.result}</p>`;
+        }
+    </script>
+</body>
+</html>
